@@ -13,7 +13,7 @@ object Main {
     lazy val item2 = new SomeTrait {}
 
     //lazy val items = findLazyVals[SomeTrait]
-    lazy val items: ListMap[String, SomeTrait] = findLazyVals[SomeTrait](this)
+    lazy val items: ListMap[String, SomeTrait] = findLazyVals[SomeTrait]
   }
 
   def main(args: Array[String]): Unit = {

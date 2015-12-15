@@ -6,16 +6,15 @@ import scala.reflect.macros.blackbox
 
 
 object Macros {
-  def findLazyVals[T](cls: AnyRef): ListMap[String, T] = macro findLazyValsImpl[T]
+  def findLazyVals[T]: ListMap[String, T] = macro findLazyValsImpl[T]
 
-  def findLazyValsImpl[T : c.WeakTypeTag](c: blackbox.Context)(cls: c.Expr[AnyRef]): c.Expr[ListMap[String, T]] = {
+  def findLazyValsImpl[T : c.WeakTypeTag](c: blackbox.Context): c.Expr[ListMap[String, T]] = {
     import c.universe._
 
-//    val cls = c.typecheck(q"this")
-//    val vals = cls.tpe.members.
+    val cls = c.typecheck(q"this")
     val tpe = weakTypeOf[T]
-    val vals = cls.actualType.members.
-      filter(sym => sym.isTerm && sym.asTerm.isMethod && sym.asTerm.isLazy && sym.asMethod.returnType <:< tpe).
+    val vals = cls.tpe.members.
+      filter(sym => sym.isMethod && sym.asTerm.isLazy && sym.asMethod.returnType <:< tpe).
       map(x => q"${Literal(Constant(x.name.decodedName.toString))} -> $x").
       toList.
       reverse
